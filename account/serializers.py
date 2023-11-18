@@ -2,6 +2,8 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from django.contrib.auth import get_user_model, authenticate
 from .tasks import send_activation_code_celery, send_password_celery
+from apps.profiles.models import UserProfile, CompanyProfile
+from apps.profiles.serializer import (UserPSerializer, CompanyPSerializer)
 
 
 User = get_user_model()
@@ -11,7 +13,7 @@ class UsersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'is_profile_complete', 'is_superuser', 'is_staff', 'date_joined', 'is_active']
+        fields = ['id', 'email', 'type_user', 'phone_number', 'is_superuser', 'is_staff', 'date_joined', 'is_active']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -19,7 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'password_confirm']
+        fields = ['email', 'password', 'password_confirm', 'phone_number', 'type_user']
 
     def validate(self, attrs):
         password = attrs.get('password')

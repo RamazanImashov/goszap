@@ -30,6 +30,11 @@ INSTALLED_APPS = [
     "account",
     'channels',
     'chat',
+    'apps.profiles',
+    'apps.resume',
+    'apps.vacancy',
+    'apps.projects',
+    'apps.post',
 ]
 
 MIDDLEWARE = [

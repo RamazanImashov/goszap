@@ -9,17 +9,10 @@
         <div class="card-body">
             <p class="card-text text-center">
                     <strong>{{ text_detail }}</strong>
-            <p class="text-center">
+                <p class="text-center">
                     {{ email }}
+                    {{ activation_code }}
                 </p>
-                {{ activation_code }}
-                <form method="post">
-                    <a class="text-center verify-button" href="{{ domain}}{email activation_code}">
-                        <button type="button" class="btn">
-                            Verify account
-                        </button>
-                    </a>
-                </form>
             </p>
         </div>
     </div>

@@ -4,6 +4,8 @@ idea
 .env.dev
 .env
 
+./apps.pers.bot
+
 *.egg-info/
 .installed.cfg
 *.egg
