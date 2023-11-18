@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
+import re
+from rest_framework.exceptions import ValidationError
 
 
 # Create your models here.
@@ -32,10 +35,15 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
+    type_choices = [
+        ('Human', 'Human'),
+        ('Company', 'Company'),
+    ]
+    type_user = models.CharField(max_length=7, choices=type_choices)
+    phone_number = models.CharField(max_length=15)
     is_active = models.BooleanField(default=False)
     activation_code = models.CharField(max_length=20, blank=True)
     forgot_password_code = models.CharField(max_length=20, blank=True)
-    is_profile_complete = models.BooleanField(default=False)
 
     objects = UserManager()
     USERNAME_FIELD = "email"
@@ -52,4 +60,8 @@ class User(AbstractUser):
         code = get_random_string(length=5, allowed_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ')
         self.forgot_password_code = code
 
+    def clean(self):
+        if self.phone_number and not re.match(r'^\+?[0-9]+$', self.phone_number):
+            raise ValidationError(_('Invalid phone number format'))
+        super().clean()
 
