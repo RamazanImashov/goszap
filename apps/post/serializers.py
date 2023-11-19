@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
 from .models import Post, Forum, ErCode, CompanyVacancy, CompanyPost
 from django.contrib.auth import get_user_model
+from apps.review.serializers import CommentSerializer
 
 User = get_user_model()
 
@@ -33,6 +34,12 @@ class ForumSerializer(ModelSerializer):
     class Meta:
         model = Forum
         fields = "__all__"
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['comments'] = CommentSerializer(instance.comments.all(), many=True).data
+        rep['like'] = instance.likes.all().count()
+        return rep
 
     def create(self, validated_data):
         user = self.context['request'].user
