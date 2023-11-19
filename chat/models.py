@@ -15,7 +15,7 @@ class ChatRoomManager(models.Manager):
 class ChatRoom(models.Model):
     title = models.CharField(max_length=100)
     chat_image = models.ImageField(upload_to='media/chat_image/')
-    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='chatrooms')
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='chatrooms', blank=True)
     admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chatrooms_created', on_delete=models.CASCADE)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='created_chatrooms', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
