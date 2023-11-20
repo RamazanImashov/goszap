@@ -2,7 +2,7 @@ from rest_framework.serializers import ModelSerializer, ValidationError, ReadOnl
 from .models import Vacancy
 from django.contrib.auth import get_user_model
 from slugify import slugify
-from resume.models import Resume
+from apps.resume.models import Resume
 
 
 User = get_user_model()
