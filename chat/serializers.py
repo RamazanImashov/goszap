@@ -1,7 +1,6 @@
 from rest_framework.serializers import ModelSerializer, ReadOnlyField, SerializerMethodField
 from .models import ChatRoom, Message
 
-
 class MessageSerializer(ModelSerializer):
     sender = ReadOnlyField(source='sender.email')
 
@@ -18,15 +17,18 @@ class MessageSerializer(ModelSerializer):
 class ChatRoomSerializer(ModelSerializer):
     admin = ReadOnlyField(source='admin.email')
     created_by = ReadOnlyField(source='created_by.email')
+
     messages = MessageSerializer(many=True, read_only=True)
 
     class Meta:
         model = ChatRoom
         fields = ('id', 'admin', 'title', 'participants', 'created_at', 'created_by', 'messages')
 
+
     def create(self, validated_data):
         user = self.context['request'].user
         participants_data = validated_data.pop('participants', [])
-        project = ChatRoom.objects.create(admin=user, created_by=user, **validated_data)
-        project.collaborators.set(participants_data)
-        return project
+        chatroom = ChatRoom.objects.create(created_by=user, admin=user, **validated_data)
+        chatroom.participants.set(participants_data)
+        return chatroom
+
