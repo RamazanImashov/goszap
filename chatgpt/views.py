@@ -1,23 +1,21 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-import openai
+from openai import OpenAI
 from decouple import config
 from .models import Chat
 from django.utils import timezone
 
 
 openai_api_key = config('GPT_KEY')
-openai.api_key = openai_api_key
+client = OpenAI(api_key=openai_api_key)
 
 
 def ask_openai(message):
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "You are an helpful assistant."},
-            {"role": "user", "content": message},
-        ]
-    )
+    response = client.chat.completions.create(model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are an helpful assistant."},
+        {"role": "user", "content": message},
+    ])
 
     answer = response.choices[0].message.content.strip()
     print(answer)
