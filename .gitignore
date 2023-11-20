@@ -15,6 +15,7 @@ sqlite.db
 venv
 .venv
 media
+static
 
 __pycache__/
 */__pycache__/
