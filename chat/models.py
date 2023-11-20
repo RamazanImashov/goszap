@@ -21,12 +21,12 @@ class ChatRoom(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     objects = ChatRoomManager()
 
-    def add_participant(self, user):
-        self.participants.add(user)
+    # def add_participant(self, user):
+    #     self.participants.add(user)
 
-    def remove_participant(self, user):
-        if user != self.created_by:
-            self.participants.remove(user)
+    # def remove_participant(self, user):
+    #     if user != self.created_by:
+    #         self.participants.remove(user)
 
 
 class Message(models.Model):
