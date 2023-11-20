@@ -1,8 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
 from .models import UserProfile, CompanyProfile
 from .serializer import UserPSerializer, CompanyPSerializer
-from .permissions import IsAuthorPermission
-from rest_framework.permissions import IsAuthenticated,IsAdminUser, AllowAny
+from .permissions import IsAuthorPermission, IsAdminPermission
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 # Create your views here.
 
@@ -14,10 +14,8 @@ class UserPViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             permissions = [AllowAny]
-        elif self.action == 'create':
-            permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminUser]
+            permissions = [IsAuthorPermission, IsAdminPermission]
         return [permission() for permission in permissions]
 
 
@@ -28,8 +26,6 @@ class CompanyPViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             permissions = [AllowAny]
-        elif self.action == 'create':
-            permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminUser]
+            permissions = [IsAuthorPermission, IsAdminPermission]
         return [permission() for permission in permissions]
