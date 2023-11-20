@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     "account",
     'channels',
     'chat',
-    'chatgpt',
     'apps.profiles',
     'apps.resume',
     'apps.vacancy',
