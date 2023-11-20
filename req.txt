@@ -13,7 +13,10 @@ channels==3.0.5
 asgiref==3.6.0
 daphne==3.0.2
 dj_database_url
-celery
-redis
+
 python-slugify
+python-decouple
+celery
 openai
+redis
+
