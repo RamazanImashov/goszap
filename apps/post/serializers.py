@@ -8,7 +8,7 @@ User = get_user_model()
 
 class PostSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.email')
-    profile = ReadOnlyField()
+    profile = ReadOnlyField(source='profile.id')
 
     class Meta:
         model = Post
@@ -16,7 +16,7 @@ class PostSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = self.context['request'].user.profiler
+        profile = user.profiler
         post = Post.objects.create(user=user, profile=profile, **validated_data)
         return post
 
@@ -29,7 +29,7 @@ class PostViewSerializer(ModelSerializer):
 
 class ForumSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.email')
-    profile = ReadOnlyField()
+    profile = ReadOnlyField(source='profile.id')
 
     class Meta:
         model = Forum
@@ -43,7 +43,7 @@ class ForumSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = self.context['request'].user.profiler
+        profile = user.profiler
         forum = Forum.objects.create(user=user, profile=profile, **validated_data)
         return forum
 
@@ -56,7 +56,7 @@ class ForumViewSerializer(ModelSerializer):
 
 class ErCodeSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.email')
-    profile = ReadOnlyField()
+    profile = ReadOnlyField(source='profile.id')
 
     class Meta:
         model = ErCode
@@ -64,7 +64,7 @@ class ErCodeSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = self.context['request'].user.profiler
+        profile = user.profiler
         ercode = ErCode.objects.create(user=user, profile=profile, **validated_data)
         return ercode
 
@@ -77,7 +77,7 @@ class ErCodeViewSerializer(ModelSerializer):
 
 class CompanyPostSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.email')
-    profile = ReadOnlyField()
+    profile = ReadOnlyField(source='profile.id')
 
     class Meta:
         model = CompanyPost
@@ -85,7 +85,7 @@ class CompanyPostSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = self.context['request'].user.profiler
+        profile = user.profiler
         comppost = CompanyPost.objects.create(user=user, profile=profile, **validated_data)
         return comppost
 
@@ -98,7 +98,7 @@ class CompanyPostSerializerView(ModelSerializer):
 
 class CompanyVacancySerializer(ModelSerializer):
     user = ReadOnlyField(source='user.email')
-    profile = ReadOnlyField()
+    profile = ReadOnlyField(source='profile.id')
 
     class Meta:
         model = CompanyVacancy
@@ -106,7 +106,7 @@ class CompanyVacancySerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = self.context['request'].user.profiler
+        profile = user.profiler
         compvac = CompanyVacancy.objects.create(user=user, profile=profile, **validated_data)
         return compvac
 
