@@ -11,21 +11,28 @@ from rest_framework.decorators import action
 # Create your views here.
 
 
-class PostViewSet(ModelViewSet):
+class PermissionMixin:
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            permissions = [IsAuthenticated]
+        else:
+            permissions = [IsAuthorPermission]
+        return [permission() for permission in permissions]
+
+
+class PostViewSet(PermissionMixin, ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             permissions = [IsAuthenticated]
-        elif self.action == 'create':
-            permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminUser]
+            permissions = [IsAuthorPermission]
         return [permission() for permission in permissions]
 
 
-class ErCodeViewSet(ModelViewSet):
+class ErCodeViewSet(PermissionMixin, ModelViewSet):
     queryset = ErCode.objects.all()
     serializer_class = ErCodeSerializer
 
@@ -39,7 +46,7 @@ class ErCodeViewSet(ModelViewSet):
         return [permission() for permission in permissions]
 
 
-class ForumViewSet(ModelViewSet):
+class ForumViewSet(PermissionMixin, ModelViewSet):
     queryset = Forum.objects.all()
     serializer_class = ForumSerializer
 
@@ -78,7 +85,7 @@ class ForumViewSet(ModelViewSet):
             return Response(message, status=200)
 
 
-class CompanyPostViewSet(ModelViewSet):
+class CompanyPostViewSet(PermissionMixin, ModelViewSet):
     queryset = CompanyPost.objects.all()
     serializer_class = CompanyPostSerializer
 
@@ -92,7 +99,7 @@ class CompanyPostViewSet(ModelViewSet):
         return [permission() for permission in permissions]
 
 
-class CompanyVacancyViewSet(ModelViewSet):
+class CompanyVacancyViewSet(PermissionMixin, ModelViewSet):
     queryset = CompanyVacancy.objects.all()
     serializer_class = CompanyVacancySerializer
 
