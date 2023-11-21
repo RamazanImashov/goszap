@@ -69,8 +69,6 @@ class OtherResumeViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             permissions = [IsAuthenticated]
-        elif self.action == 'create':
-            permissions = [IsAuthenticated]
         else:
             permissions = [IsAuthorPermission, IsAdminUser]
         return [permission() for permission in permissions]
