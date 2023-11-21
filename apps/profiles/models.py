@@ -9,7 +9,7 @@ User = get_user_model()
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='profiler')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='user_profile')
     languages = models.CharField(max_length=256, blank=True)
     programming_languages = models.CharField(max_length=256, blank=True)
     education = models.TextField(blank=True)
@@ -25,7 +25,7 @@ class UserProfile(models.Model):
 
 
 class CompanyProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='profiles')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='company_profile')
     about_company = models.TextField(blank=True)
     achievements = models.TextField(blank=True)
     direction = models.TextField(blank=True)

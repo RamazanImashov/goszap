@@ -16,7 +16,7 @@ class PostSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = user.profiler
+        profile = user.user_profile
         post = Post.objects.create(user=user, profile=profile, **validated_data)
         return post
 
@@ -43,7 +43,7 @@ class ForumSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = user.profiler
+        profile = user.user_profile
         forum = Forum.objects.create(user=user, profile=profile, **validated_data)
         return forum
 
@@ -64,7 +64,7 @@ class ErCodeSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = user.profiler
+        profile = user.user_profile
         ercode = ErCode.objects.create(user=user, profile=profile, **validated_data)
         return ercode
 
@@ -85,7 +85,7 @@ class CompanyPostSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = user.profiler
+        profile = user.company_profile
         comppost = CompanyPost.objects.create(user=user, profile=profile, **validated_data)
         return comppost
 
@@ -106,7 +106,7 @@ class CompanyVacancySerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        profile = user.profiler
+        profile = user.company_profile
         compvac = CompanyVacancy.objects.create(user=user, profile=profile, **validated_data)
         return compvac
 
