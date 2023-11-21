@@ -18,7 +18,7 @@ class PermissionMixin:
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminPermission]
+            permissions = [IsAuthorPermission]
         return [permission() for permission in permissions]
 
 
@@ -32,7 +32,7 @@ class PostViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminPermission]
+            permissions = [IsAuthorPermission]
         return [permission() for permission in permissions]
 
 
@@ -46,7 +46,7 @@ class ErCodeViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminPermission]
+            permissions = [IsAuthorPermission]
         return [permission() for permission in permissions]
 
 
@@ -60,7 +60,7 @@ class ForumViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminPermission]
+            permissions = [IsAuthorPermission]
         return [permission() for permission in permissions]
 
     @action(methods=['POST'], detail=True, permission_classes=[IsAuthenticated])
@@ -99,7 +99,7 @@ class CompanyPostViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminPermission]
+            permissions = [IsAuthorPermission]
         return [permission() for permission in permissions]
 
 
@@ -113,5 +113,5 @@ class CompanyVacancyViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminPermission]
+            permissions = [IsAuthorPermission]
         return [permission() for permission in permissions]

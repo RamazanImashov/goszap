@@ -14,7 +14,7 @@ class PermissionMixin:
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminPermission]
+            permissions = [IsAuthorPermission]
         return [permission() for permission in permissions]
 
 
@@ -28,5 +28,5 @@ class ProjectViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminPermission]
+            permissions = [IsAuthorPermission]
         return [permission() for permission in permissions]
