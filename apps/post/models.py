@@ -20,6 +20,9 @@ class Post(models.Model):
     description = models.TextField()
     celery = models.PositiveIntegerField()
 
+    def __str__(self):
+        return self.name
+
 
 class Forum(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='forum')
@@ -66,3 +69,22 @@ class CompanyVacancy(models.Model):
         ('Online', 'Online'),
     ]
     type_employment = models.CharField(max_length=6, choices=type_choices)
+
+
+class DitailUserPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ditail_user_post')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='ditail_user_post')
+    body = models.TextField()
+
+
+class DitailCompanyPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ditail_company_post')
+    post = models.ForeignKey(CompanyPost, on_delete=models.CASCADE, related_name='ditail_company_post')
+    body = models.TextField()
+
+
+class DitailCompanyVacancy(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ditail_company_vacancy')
+    post = models.ForeignKey(CompanyVacancy, on_delete=models.CASCADE, related_name='ditail_company_vacancy')
+    body = models.TextField()
+

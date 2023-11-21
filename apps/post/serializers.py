@@ -1,9 +1,15 @@
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
-from .models import Post, Forum, ErCode, CompanyVacancy, CompanyPost
+from .models import Post, Forum, ErCode, CompanyVacancy, CompanyPost, DitailCompanyVacancy, DitailCompanyPost, DitailUserPost
 from django.contrib.auth import get_user_model
-from apps.review.serializers import CommentSerializer, LikeSeeSerializer
+from apps.review.serializers import CommentSerializer
 
 User = get_user_model()
+
+
+class ListPostSerializer(ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id', 'name', 'type_choices', 'celery']
 
 
 class PostSerializer(ModelSerializer):
@@ -13,6 +19,11 @@ class PostSerializer(ModelSerializer):
     class Meta:
         model = Post
         fields = "__all__"
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['desc'] = DitailUserPostSerializer(instance.ditail_user_post.all(), many=True).data
+        return rep
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -25,6 +36,12 @@ class PostViewSerializer(ModelSerializer):
     class Meta:
         model = Post
         fields = "__all__"
+
+
+class ListForumSerializer(ModelSerializer):
+    class Meta:
+        model = Forum
+        fields = ['id', 'name']
 
 
 class ForumSerializer(ModelSerializer):
@@ -54,6 +71,12 @@ class ForumViewSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class ListErCodeSerializer(ModelSerializer):
+    class Meta:
+        model = ErCode
+        fields = ['id', 'name']
+
+
 class ErCodeSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.email')
     profile = ReadOnlyField(source='profile.id')
@@ -75,6 +98,12 @@ class ErCodeViewSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class ListCompanyPostSerializer(ModelSerializer):
+    class Meta:
+        model = CompanyPost
+        fields = ['id', 'name', 'type_post', 'celery']
+
+
 class CompanyPostSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.email')
     profile = ReadOnlyField(source='profile.id')
@@ -82,6 +111,11 @@ class CompanyPostSerializer(ModelSerializer):
     class Meta:
         model = CompanyPost
         fields = "__all__"
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['desc'] = DitailCompanyPostSerializer(instance.ditail_company_post.all(), many=True).data
+        return rep
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -96,6 +130,12 @@ class CompanyPostSerializerView(ModelSerializer):
         fields = "__all__"
 
 
+class ListCompanyVacancySerializer(ModelSerializer):
+    class Meta:
+        model = CompanyVacancy
+        fields = ['id', 'name', 'position', 'type_employment', 'type_work']
+
+
 class CompanyVacancySerializer(ModelSerializer):
     user = ReadOnlyField(source='user.email')
     profile = ReadOnlyField(source='profile.id')
@@ -103,6 +143,11 @@ class CompanyVacancySerializer(ModelSerializer):
     class Meta:
         model = CompanyVacancy
         fields = "__all__"
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['desc'] = DitailCompanyVacancySerializer(instance.ditail_company_vacancy.all(), many=True).data
+        return rep
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -115,3 +160,41 @@ class CompanyVacancySerializerView(ModelSerializer):
     class Meta:
         model = CompanyVacancy
         fields = "__all__"
+
+
+class DitailCompanyVacancySerializer(ModelSerializer):
+    user = ReadOnlyField(source='user.email')
+    class Meta:
+        model = DitailCompanyVacancy
+        fields = "__all__"
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        ditail_comp_vac = DitailCompanyVacancy.objects.create(user=user, **validated_data)
+        return ditail_comp_vac
+
+
+class DitailCompanyPostSerializer(ModelSerializer):
+    user = ReadOnlyField(source='user.email')
+
+    class Meta:
+        model = DitailCompanyPost
+        fields = "__all__"
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        ditail_comp_post = DitailCompanyPost.objects.create(user=user, **validated_data)
+        return ditail_comp_post
+
+
+class DitailUserPostSerializer(ModelSerializer):
+    user = ReadOnlyField(source='user.email')
+
+    class Meta:
+        model = DitailUserPost
+        fields = "__all__"
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        ditail_user_post = DitailUserPost.objects.create(user=user, **validated_data)
+        return ditail_user_post
