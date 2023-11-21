@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from .models import Post, ErCode, Forum, CompanyPost, CompanyVacancy
-from .serializers import PostSerializer, ForumSerializer, ErCodeSerializer,CompanyVacancySerializer, CompanyPostSerializer
+from .models import Post, ErCode, Forum, CompanyPost, CompanyVacancy, DitailCompanyPost, DitailCompanyVacancy, DitailUserPost
+from .serializers import PostSerializer, ForumSerializer, ErCodeSerializer, CompanyVacancySerializer, CompanyPostSerializer, DitailCompanyVacancySerializer, DitailCompanyPostSerializer, DitailUserPostSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAuthorPermission, IsAdminPermission
 from apps.review.models import Like
@@ -106,6 +106,48 @@ class CompanyPostViewSet(PermissionMixin, ModelViewSet):
 class CompanyVacancyViewSet(PermissionMixin, ModelViewSet):
     queryset = CompanyVacancy.objects.all()
     serializer_class = CompanyVacancySerializer
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            permissions = [IsAuthenticated]
+        elif self.action == 'create':
+            permissions = [IsAuthenticated]
+        else:
+            permissions = [IsAuthorPermission]
+        return [permission() for permission in permissions]
+
+
+class DitailCompanyPostViewSet(PermissionMixin, ModelViewSet):
+    queryset = DitailCompanyPost.objects.all()
+    serializer_class = DitailCompanyPostSerializer
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            permissions = [IsAuthenticated]
+        elif self.action == 'create':
+            permissions = [IsAuthenticated]
+        else:
+            permissions = [IsAuthorPermission]
+        return [permission() for permission in permissions]
+
+
+class DitailCompanyVacancyViewSet(PermissionMixin, ModelViewSet):
+    queryset = DitailCompanyVacancy.objects.all()
+    serializer_class = DitailCompanyVacancySerializer
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            permissions = [IsAuthenticated]
+        elif self.action == 'create':
+            permissions = [IsAuthenticated]
+        else:
+            permissions = [IsAuthorPermission]
+        return [permission() for permission in permissions]
+
+
+class DitailUserPostViewSet(PermissionMixin, ModelViewSet):
+    queryset = DitailUserPost.objects.all()
+    serializer_class = DitailUserPostSerializer
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
