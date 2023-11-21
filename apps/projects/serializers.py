@@ -16,11 +16,8 @@ class ProjectSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        if User.objects.filter(type_user='Human'):
-            profile = user.profiler
-        else:
-            profile = user.profiles
-        project = Project.objects.create(user=user, profile=profile, **validated_data)
+        profiles = user.user_profile
+        project = Project.objects.create(user=user, profile=profiles, **validated_data)
         return project
 
 

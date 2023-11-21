@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
 from .models import Post, Forum, ErCode, CompanyVacancy, CompanyPost
 from django.contrib.auth import get_user_model
-from apps.review.serializers import CommentSerializer
+from apps.review.serializers import CommentSerializer, LikeSeeSerializer
 
 User = get_user_model()
 

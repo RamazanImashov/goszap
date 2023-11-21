@@ -4,7 +4,7 @@ from .serializers import ResumeSerializer, OtherResumeSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from .permissions import IsOwner, IsAuthorPermission
+from .permissions import IsAuthorPermission, IsAdminPermission
 from .models import Resume, OtherResume
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.serializers import ValidationError
@@ -16,7 +16,7 @@ User = get_user_model()
 
 
 class ResumeView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsAuthorPermission]
 
     def validate_specialization(self, specialization):
         user = self.request.user
@@ -48,7 +48,7 @@ class ResumeView(APIView):
 class ResumeDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Resume.objects.all()
     serializer_class = ResumeSerializer
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsAdminPermission]
 
 
 # class EmployerResumeRetrieveView(generics.RetrieveAPIView):
@@ -69,6 +69,8 @@ class OtherResumeViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             permissions = [IsAuthenticated]
+        elif self.action == 'create':
+            permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminUser]
+            permissions = [IsAuthorPermission, IsAdminPermission]
         return [permission() for permission in permissions]
