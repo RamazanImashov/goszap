@@ -21,8 +21,8 @@ class Comment(models.Model):
 
 class Like(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
-    forum = models.ForeignKey(Forum, on_delete=models.CASCADE, related_name='likes'),
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE, related_name='likes')
 
     def __str__(self):
-        return f'{self.author}{self.video}'
+        return f'{self.author}{self.forum}'
 

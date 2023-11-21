@@ -32,13 +32,13 @@ class CommentActionSerializer(ModelSerializer):
         return video
 
     def create(self, validated_data):
-        comment = Comment.objects.create( **validated_data)
+        comment = Comment.objects.create(**validated_data)
         return comment
 
 
 class LikeSerializer(ModelSerializer):
     author = ReadOnlyField(source='author.email')
-    video = ReadOnlyField()
+    forum = ReadOnlyField()
 
     class Meta:
         model = Like
@@ -49,4 +49,14 @@ class LikeSerializer(ModelSerializer):
         return self.Meta.model.objects.create(author=user, **validated_data)
 
 
+class LikeSeeSerializer(ModelSerializer):
+    author = ReadOnlyField(source='author.email')
 
+    class Meta:
+        model = Like
+        fields = '__all__'
+
+    def create(self, validated_data):
+        user = self.context.get('request').user
+        comment = Like.objects.create(author=user, **validated_data)
+        return comment

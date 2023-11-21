@@ -2,8 +2,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from .models import Post, ErCode, Forum, CompanyPost, CompanyVacancy
 from .serializers import PostSerializer, ForumSerializer, ErCodeSerializer,CompanyVacancySerializer, CompanyPostSerializer
-from rest_framework.permissions import IsAuthenticated,IsAdminUser
-from .permissions import IsAuthorPermission
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAuthorPermission, IsAdminPermission
 from apps.review.models import Like
 from apps.review.serializers import CommentActionSerializer, LikeSerializer
 from rest_framework.decorators import action
@@ -15,8 +15,10 @@ class PermissionMixin:
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             permissions = [IsAuthenticated]
+        elif self.action == 'create':
+            permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission]
+            permissions = [IsAuthorPermission, IsAdminPermission]
         return [permission() for permission in permissions]
 
 
@@ -27,8 +29,10 @@ class PostViewSet(PermissionMixin, ModelViewSet):
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             permissions = [IsAuthenticated]
+        elif self.action == 'create':
+            permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission]
+            permissions = [IsAuthorPermission, IsAdminPermission]
         return [permission() for permission in permissions]
 
 
@@ -42,7 +46,7 @@ class ErCodeViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminUser]
+            permissions = [IsAuthorPermission, IsAdminPermission]
         return [permission() for permission in permissions]
 
 
@@ -56,21 +60,21 @@ class ForumViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminUser]
+            permissions = [IsAuthorPermission, IsAdminPermission]
         return [permission() for permission in permissions]
 
     @action(methods=['POST'], detail=True, permission_classes=[IsAuthenticated])
     def like(self, request, pk=None):
-        video = self.get_object()
+        forum = self.get_object()
         user = request.user
         serializer = LikeSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             try:
-                like = Like.objects.get(video=video, author=user)
+                like = Like.objects.get(forum=forum, author=user)
                 like.delete()
                 message = 'Unlike'
             except Like.DoesNotExist:
-                Like.objects.create(video=video, author=user)
+                Like.objects.create(forum=forum, author=user)
                 message = 'Like'
             return Response(message, status=200)
 
@@ -95,7 +99,7 @@ class CompanyPostViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminUser]
+            permissions = [IsAuthorPermission, IsAdminPermission]
         return [permission() for permission in permissions]
 
 
@@ -109,5 +113,5 @@ class CompanyVacancyViewSet(PermissionMixin, ModelViewSet):
         elif self.action == 'create':
             permissions = [IsAuthenticated]
         else:
-            permissions = [IsAuthorPermission, IsAdminUser]
+            permissions = [IsAuthorPermission, IsAdminPermission]
         return [permission() for permission in permissions]
