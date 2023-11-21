@@ -6,8 +6,16 @@ from .permissions import IsAuthorPermission
 
 # Create your views here.
 
+class PermissionMixin:
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            permissions = [IsAuthenticated]
+        else:
+            permissions = [IsAuthorPermission]
+        return [permission() for permission in permissions]
 
-class ProjectViewSet(ModelViewSet):
+
+class ProjectViewSet(PermissionMixin, ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
