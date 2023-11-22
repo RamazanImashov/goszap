@@ -24,7 +24,7 @@ from drf_yasg.views import get_schema_view
 schema_view = get_schema_view(
     openapi.Info(
         title='PornHub',
-        description='SpaceHub documentation',
+        description='Redux Job documentation',
         default_version='v1'
     ),
     public=True
