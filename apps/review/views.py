@@ -24,5 +24,6 @@ class CommentView(PermissionMixin, ModelViewSet):
     serializer_class = CommentSerializer
 
 
-
-
+class LikeView(PermissionMixin, ModelViewSet):
+    queryset = Like.objects.all()
+    serializer_class = LikeSeeSerializer

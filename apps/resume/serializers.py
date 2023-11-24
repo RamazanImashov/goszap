@@ -103,10 +103,7 @@ class OtherResumeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        if User.objects.filter(type_user='Human'):
-            profile = user.profiler
-        else:
-            profile = user.profiles
+        profile = user.user_profile
         project = OtherResume.objects.create(user=user, profile=profile, **validated_data)
         return project
 

@@ -73,18 +73,21 @@ class CompanyVacancy(models.Model):
 
 class DitailUserPost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ditail_user_post')
+    title = models.CharField(max_length=50)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='ditail_user_post')
     body = models.TextField()
 
 
 class DitailCompanyPost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ditail_company_post')
+    title = models.CharField(max_length=50)
     post = models.ForeignKey(CompanyPost, on_delete=models.CASCADE, related_name='ditail_company_post')
     body = models.TextField()
 
 
 class DitailCompanyVacancy(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ditail_company_vacancy')
+    title = models.CharField(max_length=50)
     post = models.ForeignKey(CompanyVacancy, on_delete=models.CASCADE, related_name='ditail_company_vacancy')
     body = models.TextField()
 
