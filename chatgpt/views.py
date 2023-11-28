@@ -1,17 +1,19 @@
-from django.shortcuts import render
-from django.http import JsonResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from .models import Chat
+from .serializers import ChatSerializer
 from openai import OpenAI
 from decouple import config
-from .models import Chat
 from django.utils import timezone
-from asgiref.sync import sync_to_async
-import asyncio
+
 
 openai_api_key = config('GPT_KEY')
 client = OpenAI(api_key=openai_api_key)
 
 
-async def ask_openai(message):
+def ask_openai(message):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -25,25 +27,22 @@ async def ask_openai(message):
     return answer
 
 
-@sync_to_async
-def save_chat(user, message, response):
-    chat = Chat(user=user, message=message, response=response, created_at=timezone.now())
-    chat.save()
+class ChatBotAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request):
+        chats = Chat.objects.filter(user=request.user)
 
-async def handle_chat(request):
-    chats = await sync_to_async(Chat.objects.filter)(user=request.user)
+        message = request.data.get('message')
+        response = ask_openai(message)
 
-    if request.method == 'POST':
-        message = request.POST.get('message')
-        response = await ask_openai(message)
+        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
+        chat.save()
 
-        await save_chat(request.user, message, response)
+        serializer = ChatSerializer(chats, many=True)  # Serialize the queryset
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return JsonResponse({'message': message, 'response': response})
-
-    return render(request, 'chatbot.html', {'chats': chats})
-
-
-async def chatbot(request):
-    return await handle_chat(request)
+    def get(self, request):
+        chats = Chat.objects.filter(user=request.user)
+        serializer = ChatSerializer(chats, many=True)  # Serialize the queryset
+        return Response(serializer.data, status=status.HTTP_200_OK)
