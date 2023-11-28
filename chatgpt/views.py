@@ -4,6 +4,7 @@ from openai import OpenAI
 from decouple import config
 from .models import Chat
 from django.utils import timezone
+from asgiref.sync import sync_to_async
 import asyncio
 
 openai_api_key = config('GPT_KEY')
@@ -14,30 +15,35 @@ async def ask_openai(message):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "Вы полезный ассистент."},
             {"role": "user", "content": message},
-        ])
+        ],
+    )
 
     answer = response.choices[0].message.content.strip()
     print(answer)
     return answer
 
 
+@sync_to_async
+def save_chat(user, message, response):
+    chat = Chat(user=user, message=message, response=response, created_at=timezone.now())
+    chat.save()
+
+
 async def handle_chat(request):
-    chats = Chat.objects.filter(user=request.user)
+    chats = await sync_to_async(Chat.objects.filter)(user=request.user)
 
     if request.method == 'POST':
         message = request.POST.get('message')
         response = await ask_openai(message)
 
-        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
-        chat.save()
+        await save_chat(request.user, message, response)
+
         return JsonResponse({'message': message, 'response': response})
 
     return render(request, 'chatbot.html', {'chats': chats})
 
 
-def chatbot(request):
-    loop = asyncio.get_event_loop()
-    return loop.run_until_complete(handle_chat(request))
-
+async def chatbot(request):
+    return await handle_chat(request)
