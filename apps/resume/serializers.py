@@ -3,7 +3,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Resume, OtherResume
 from .utils_resume import send_resume_data
-from apps.vacancy.models import Vacancy
+from apps.post.models import CompanyVacancy
+# from apps.vacancy.models import Vacancy
 # from .tasks import send_activation_code_celery
 
 
@@ -21,7 +22,7 @@ class ResumeSerializer(serializers.ModelSerializer):
     email = serializers.ReadOnlyField(source='user.email')
     date_of_birth = serializers.DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y'])
     applied_vacancies = serializers.PrimaryKeyRelatedField(
-        queryset=Vacancy.objects.all(),
+        queryset=CompanyVacancy.objects.all(),
         many=True,
         write_only=True
     )
@@ -29,14 +30,6 @@ class ResumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resume
         exclude = ['profile_photo']
-
-    def validate_phone_number(self, attrs):
-        phone_number = attrs
-        if not phone_number.startswith('+996') or not phone_number[4:].isdigit():
-            raise ValidationError('Номер должен начинаться с +996 и содержать только цифры')
-        elif len(phone_number) != 13:
-            raise ValidationError('Указано неправильное количество цифр, проверьте номер')
-        return attrs
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -103,10 +96,7 @@ class OtherResumeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        if User.objects.filter(type_user='Human'):
-            profile = user.profiler
-        else:
-            profile = user.profiles
+        profile = user.user_profile
         project = OtherResume.objects.create(user=user, profile=profile, **validated_data)
         return project
 

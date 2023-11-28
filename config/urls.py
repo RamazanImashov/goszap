@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/v1/project/', include('apps.projects.urls')),
     path('api/v1/post/', include('apps.post.urls')),
     path('api/v1/gpt/', include('chatgpt.urls')),
+    path('api/v1/review/', include('apps.review.urls')),
 ]
 
 
