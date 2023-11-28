@@ -11,7 +11,7 @@ User = get_user_model()
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='posts')
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=150)
     type_choices = [
         ('Work', 'Work'),
         ('Teams', 'Teams'),
@@ -27,7 +27,7 @@ class Post(models.Model):
 class Forum(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='forum')
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='forum')
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=150)
     description = models.TextField()
     file = models.FileField(upload_to='forum_file/')
 
@@ -35,7 +35,7 @@ class Forum(models.Model):
 class ErCode(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ercode')
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='ercode')
-    name = models.CharField(max_length=50)
+    name = models.TextField()
     description = models.TextField()
     file = models.FileField(upload_to='ercode_file/')
 
@@ -43,7 +43,7 @@ class ErCode(models.Model):
 class CompanyPost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='company_posts')
     profile = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='company_posts')
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=150)
     type_choices = [
         ('Work', 'Work'),
         ('Teams', 'Teams'),
@@ -56,8 +56,8 @@ class CompanyPost(models.Model):
 class CompanyVacancy(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='company_vacancy')
     profile = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='company_vacancy')
-    title = models.CharField(max_length=50)
-    position = models.CharField(max_length=50)
+    title = models.CharField(max_length=150)
+    position = models.CharField(max_length=150)
     celery = models.PositiveIntegerField()
     type_work_choices = [
         ('Work', 'Work'),

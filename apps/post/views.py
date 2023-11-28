@@ -122,7 +122,7 @@ class ForumViewSet(ModelViewSet):
         elif self.action in ['update', 'partial_update', 'destroy']:
             self.permission_classes = [IsAuthorPermission]
         elif self.action in ['list', 'retrieve']:
-            self.permission_classes = [AllowAny]
+            self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
 
@@ -136,13 +136,13 @@ class CompanyPostViewSet(PermissionMixin, ModelViewSet):
         return self.serializer_class
 
     def get_permissions(self):
-        if self.action in ('list', 'retrieve'):
-            permissions = [IsAuthenticated]
-        elif self.action == 'create':
-            permissions = [IsAuthenticated]
-        else:
-            permissions = [IsAuthorPermission]
-        return [permission() for permission in permissions]
+        if self.action == 'create':
+            self.permission_classes = [IsAuthenticated]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            self.permission_classes = [IsAuthorPermission]
+        elif self.action in ['list', 'retrieve']:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
 
 
 class CompanyVacancyViewSet(PermissionMixin, ModelViewSet):
