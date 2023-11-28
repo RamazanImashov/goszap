@@ -10,6 +10,8 @@ from .permissions import IsAuthorPermission, IsAdminPermission
 from apps.review.models import Like
 from apps.review.serializers import CommentActionSerializer, LikeSerializer
 from rest_framework.decorators import action
+from rest_framework import filters
+import django_filters
 
 # Create your views here.
 
@@ -36,6 +38,10 @@ class PermissionMixin:
 class PostViewSet(PermissionMixin, ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name', 'type_post', 'celery']
+    search_fields = ['name', 'type_post', 'celery']
+    ordering_fields = ['type_post', 'name']
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
@@ -55,6 +61,10 @@ class PostViewSet(PermissionMixin, ModelViewSet):
 class ErCodeViewSet(PermissionMixin, ModelViewSet):
     queryset = ErCode.objects.all()
     serializer_class = ErCodeSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name']
+    search_fields = ['name']
+    ordering_fields = ['name']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -74,6 +84,10 @@ class ErCodeViewSet(PermissionMixin, ModelViewSet):
 class ForumViewSet(ModelViewSet):
     queryset = Forum.objects.all()
     serializer_class = ForumSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name']
+    search_fields = ['name']
+    ordering_fields = ['name']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -129,6 +143,10 @@ class ForumViewSet(ModelViewSet):
 class CompanyPostViewSet(PermissionMixin, ModelViewSet):
     queryset = CompanyPost.objects.all()
     serializer_class = CompanyPostSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name', 'type_post', 'celery']
+    search_fields = ['name', 'type_post', 'celery']
+    ordering_fields = ['type_post', 'name']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -148,6 +166,10 @@ class CompanyPostViewSet(PermissionMixin, ModelViewSet):
 class CompanyVacancyViewSet(PermissionMixin, ModelViewSet):
     queryset = CompanyVacancy.objects.all()
     serializer_class = CompanyVacancySerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name', 'type_post', 'celery', 'type_employment']
+    search_fields = ['name', 'type_post', 'type_employment', 'celery']
+    ordering_fields = ['type_post', 'name']
 
     def get_serializer_class(self):
         if self.action == 'list':
