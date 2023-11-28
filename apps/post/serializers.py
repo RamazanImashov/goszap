@@ -9,7 +9,7 @@ User = get_user_model()
 class ListPostSerializer(ModelSerializer):
     class Meta:
         model = Post
-        fields = ['id', 'name', 'type_choices', 'celery']
+        fields = ['id', 'name', 'type_post', 'description', 'celery']
 
 
 class PostSerializer(ModelSerializer):
@@ -101,7 +101,7 @@ class ErCodeViewSerializer(ModelSerializer):
 class ListCompanyPostSerializer(ModelSerializer):
     class Meta:
         model = CompanyPost
-        fields = ['id', 'name', 'type_post', 'celery']
+        fields = ['id', 'name', 'type_post', 'description', 'celery']
 
 
 class CompanyPostSerializer(ModelSerializer):
@@ -133,7 +133,7 @@ class CompanyPostSerializerView(ModelSerializer):
 class ListCompanyVacancySerializer(ModelSerializer):
     class Meta:
         model = CompanyVacancy
-        fields = ['id', 'name', 'position', 'type_employment', 'type_work']
+        fields = ['id', 'title', 'position', 'type_employment', 'type_work']
 
 
 class CompanyVacancySerializer(ModelSerializer):

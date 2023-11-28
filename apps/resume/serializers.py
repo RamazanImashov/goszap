@@ -4,6 +4,10 @@ from django.contrib.auth import get_user_model
 from .models import Resume, OtherResume
 from django.core.validators import MinValueValidator
 from datetime import date, timedelta
+from .utils_resume import send_resume_data
+from apps.post.models import CompanyVacancy
+# from apps.vacancy.models import Vacancy
+# from .tasks import send_activation_code_celery
 
 User = get_user_model()
 
@@ -29,6 +33,16 @@ class ResumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resume
         fields = '__all__'
+    date_of_birth = serializers.DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y'])
+    applied_vacancies = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyVacancy.objects.all(),
+        many=True,
+        write_only=True
+    )
+
+    class Meta:
+        model = Resume
+        exclude = ['profile_photo']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -81,6 +95,7 @@ class OtherResumeSerializer(serializers.ModelSerializer):
             profile = user.profiler
         else:
             profile = user.profile
+        profile = user.user_profile
         project = OtherResume.objects.create(user=user, profile=profile, **validated_data)
         return project
 

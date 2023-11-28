@@ -5,29 +5,43 @@ from .serializers import (PostSerializer, ForumSerializer, ErCodeSerializer, Com
                           CompanyPostSerializer, DitailCompanyVacancySerializer,
                           DitailCompanyPostSerializer, DitailUserPostSerializer, ListCompanyPostSerializer,
                           ListForumSerializer, ListErCodeSerializer, ListPostSerializer, ListCompanyVacancySerializer)
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from .permissions import IsAuthorPermission, IsAdminPermission
 from apps.review.models import Like
 from apps.review.serializers import CommentActionSerializer, LikeSerializer
 from rest_framework.decorators import action
+from rest_framework import filters
+import django_filters
 
 # Create your views here.
 
 
+# class PermissionMixin:
+#     def get_permissions(self):
+#         if self.action in ('list', 'retrieve'):
+#             permissions = [IsAuthenticated]
+#         elif self.action == 'create':
+#             permissions = [IsAuthenticated]
+#         else:
+#             permissions = [IsAuthorPermission]
+#         return [permission() for permission in permissions]
+
 class PermissionMixin:
     def get_permissions(self):
-        if self.action in ('list', 'retrieve'):
-            permissions = [IsAuthenticated]
-        elif self.action == 'create':
-            permissions = [IsAuthenticated]
+        if self.action in ('update', 'partial_update', 'destroy', 'create'):
+            permissions = [IsAdminUser]
         else:
-            permissions = [IsAuthorPermission]
-        return [permission() for permission in permissions]
+            permissions = [AllowAny]
+        return [permissions() for permissions in permissions]
 
 
 class PostViewSet(PermissionMixin, ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name', 'type_post', 'celery']
+    search_fields = ['name', 'type_post', 'celery']
+    ordering_fields = ['type_post', 'name']
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
@@ -43,9 +57,14 @@ class PostViewSet(PermissionMixin, ModelViewSet):
             return ListPostSerializer
         return self.serializer_class
 
+
 class ErCodeViewSet(PermissionMixin, ModelViewSet):
     queryset = ErCode.objects.all()
     serializer_class = ErCodeSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name']
+    search_fields = ['name']
+    ordering_fields = ['name']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -62,23 +81,18 @@ class ErCodeViewSet(PermissionMixin, ModelViewSet):
         return [permission() for permission in permissions]
 
 
-class ForumViewSet(PermissionMixin, ModelViewSet):
+class ForumViewSet(ModelViewSet):
     queryset = Forum.objects.all()
     serializer_class = ForumSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name']
+    search_fields = ['name']
+    ordering_fields = ['name']
 
     def get_serializer_class(self):
         if self.action == 'list':
             return ListForumSerializer
         return self.serializer_class
-
-    def get_permissions(self):
-        if self.action in ('list', 'retrieve'):
-            permissions = [IsAuthenticated]
-        elif self.action == 'create':
-            permissions = [IsAuthenticated]
-        else:
-            permissions = [IsAuthorPermission]
-        return [permission() for permission in permissions]
 
     @action(methods=['POST'], detail=True, permission_classes=[IsAuthenticated])
     def like(self, request, pk=None):
@@ -106,9 +120,33 @@ class ForumViewSet(PermissionMixin, ModelViewSet):
             return Response(message, status=200)
 
 
+    # def get_permissions(self):
+    #     if self.action in ('list', 'retrieve'):
+    #         permissions = [IsAuthenticated]
+    #     elif self.action == 'create':
+    #         permissions = [IsAuthenticated]
+    #     else:
+    #         permissions = [IsAuthorPermission]
+    #     return [permission() for permission in permissions]
+
+
+    def get_permissions(self):
+        if self.action == 'create':
+            self.permission_classes = [IsAuthenticated]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            self.permission_classes = [IsAuthorPermission]
+        elif self.action in ['list', 'retrieve']:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
+
+
 class CompanyPostViewSet(PermissionMixin, ModelViewSet):
     queryset = CompanyPost.objects.all()
     serializer_class = CompanyPostSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name', 'type_post', 'celery']
+    search_fields = ['name', 'type_post', 'celery']
+    ordering_fields = ['type_post', 'name']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -116,18 +154,22 @@ class CompanyPostViewSet(PermissionMixin, ModelViewSet):
         return self.serializer_class
 
     def get_permissions(self):
-        if self.action in ('list', 'retrieve'):
-            permissions = [IsAuthenticated]
-        elif self.action == 'create':
-            permissions = [IsAuthenticated]
-        else:
-            permissions = [IsAuthorPermission]
-        return [permission() for permission in permissions]
+        if self.action == 'create':
+            self.permission_classes = [IsAuthenticated]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            self.permission_classes = [IsAuthorPermission]
+        elif self.action in ['list', 'retrieve']:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
 
 
 class CompanyVacancyViewSet(PermissionMixin, ModelViewSet):
     queryset = CompanyVacancy.objects.all()
     serializer_class = CompanyVacancySerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['name', 'type_post', 'celery', 'type_employment']
+    search_fields = ['name', 'type_post', 'type_employment', 'celery']
+    ordering_fields = ['type_post', 'name']
 
     def get_serializer_class(self):
         if self.action == 'list':

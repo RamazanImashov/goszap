@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from apps.vacancy.models import Vacancy
+# from apps.vacancy.models import Vacancy
 from apps.profiles.models import UserProfile
+from apps.post.models import CompanyVacancy
 
 
 User = get_user_model()
@@ -34,6 +35,8 @@ class Resume(models.Model):
     ]
     education = models.CharField(max_length=20, choices=education_choice, verbose_name='Уровень образования')
     status = models.CharField(max_length=20, blank=True, null=True)
+    expected_salary = models.CharField(max_length=5, blank=True)
+    applied_vacancies = models.ManyToManyField(CompanyVacancy, related_name='applicants_resumes', blank=True)
 
     def __str__(self):
         return f'{self.id} - resume of: {self.user}'

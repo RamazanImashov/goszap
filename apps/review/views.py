@@ -44,3 +44,7 @@ class CommentView(PermissionMixin, ModelViewSet):
 #         serialized_vacancies = FavoriteVacancySerializer(recommended_vacancies, many=True)
 #         return Response(serialized_vacancies.data)
 
+
+class LikeView(PermissionMixin, ModelViewSet):
+    queryset = Like.objects.all()
+    serializer_class = LikeSeeSerializer
