@@ -2,63 +2,39 @@ from rest_framework.serializers import ValidationError, ReadOnlyField
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Resume, OtherResume
-from .utils_resume import send_resume_data
-from apps.vacancy.models import Vacancy
-# from .tasks import send_activation_code_celery
+from django.core.validators import MinValueValidator
+from datetime import date, timedelta
 
-
-User = get_user_model()  # возвращает активную модельку юзера
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email']
+        fields = ['id', 'email']
 
 
 class ResumeSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    profile = ReadOnlyField(source='profile.id')
     email = serializers.ReadOnlyField(source='user.email')
-    date_of_birth = serializers.DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y'])
-    applied_vacancies = serializers.PrimaryKeyRelatedField(
-        queryset=Vacancy.objects.all(),
-        many=True,
-        write_only=True
-    )
+    date_of_birth = serializers.DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y'],
+                                          validators=[
+                                              MinValueValidator(
+                                                limit_value=date.today() - timedelta(days=14*365),
+                                                message='Вы должны быть старше 14 лет')
+                                            ]
+                                          )
 
     class Meta:
         model = Resume
-        exclude = ['profile_photo']
-
-    def validate_phone_number(self, attrs):
-        phone_number = attrs
-        if not phone_number.startswith('+996') or not phone_number[4:].isdigit():
-            raise ValidationError('Номер должен начинаться с +996 и содержать только цифры')
-        elif len(phone_number) != 13:
-            raise ValidationError('Указано неправильное количество цифр, проверьте номер')
-        return attrs
+        fields = '__all__'
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         user_data = representation.pop('user')
         representation.update(user_data)
         return representation
-
-    def validate_specialization(self, value):
-        allowed_specializations = ['Front-end разработка', 'Back-end разработка',
-                                   'Мобильная разработка', 'Data science', 'UX/UI дизайн']
-
-        if value not in allowed_specializations:
-            raise ValidationError(
-                f'Недопустимое значение направления. Допустимые значения: {", ".join(allowed_specializations)}')
-
-        user = self.context.get('request').user if self.context.get('request') else None
-        if user:
-            existing_resume = Resume.objects.filter(user=user, specialization=value).exclude(
-                id=self.instance.id if self.instance else None).first()
-            if existing_resume:
-                raise serializers.ValidationError('Вы уже создали резюме с такой специализацией')
-        return value
 
     def validate_sex(self, value):
         allowed_sex = ['f', 'm']
@@ -80,14 +56,12 @@ class ResumeSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        applied_vacancies = validated_data.pop('applied_vacancies', [])  # Извлекаем applied_vacancies из данных
         user_data = validated_data.pop('user')
         email = user_data.email
         user = User.objects.filter(email=email).first()
+        profile = user.user_profile
         if user:
-            resume = Resume.objects.create(user=user, **validated_data)
-            resume.applied_vacancies.set(applied_vacancies)
-            send_resume_data(email, resume)
+            resume = Resume.objects.create(user=user, profile=profile, **validated_data)
             return resume
         else:
             raise serializers.ValidationError('Пользователь с указанным email не найден')
@@ -103,10 +77,10 @@ class OtherResumeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        if User.objects.filter(type_user='Human'):
+        if user.type_user == 'Human':
             profile = user.profiler
         else:
-            profile = user.profiles
+            profile = user.profile
         project = OtherResume.objects.create(user=user, profile=profile, **validated_data)
         return project
 
