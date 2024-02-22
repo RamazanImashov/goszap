@@ -167,9 +167,9 @@ class CompanyVacancyViewSet(PermissionMixin, ModelViewSet):
     queryset = CompanyVacancy.objects.all()
     serializer_class = CompanyVacancySerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['name', 'type_post', 'celery', 'type_employment']
-    search_fields = ['name', 'type_post', 'type_employment', 'celery']
-    ordering_fields = ['type_post', 'name']
+    filterset_fields = ['title', 'type_work', 'celery', 'type_employment']
+    search_fields = ['title', 'type_work', 'type_employment', 'celery']
+    ordering_fields = ['type_work', 'title']
 
     def get_serializer_class(self):
         if self.action == 'list':

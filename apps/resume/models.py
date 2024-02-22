@@ -11,6 +11,8 @@ User = get_user_model()
 class Resume(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resume')
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='resume')
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
     specializations = [
         ('Front-end разработка', 'Front-end разработка'),
         ('Back-end разработка', 'Back-end разработка'),

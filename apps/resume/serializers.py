@@ -18,17 +18,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ResumeSerializer(serializers.ModelSerializer):
+    profile = ReadOnlyField(source='profile.id')
     user = UserSerializer(read_only=True)
     email = serializers.ReadOnlyField(source='user.email')
     date_of_birth = serializers.DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y'])
-    applied_vacancies = serializers.PrimaryKeyRelatedField(
-        queryset=CompanyVacancy.objects.all(),
-        many=True,
-        write_only=True
-    )
+    # applied_vacancies = serializers.PrimaryKeyRelatedField(
+    #     queryset=CompanyVacancy.objects.all(),
+    #     many=True,
+    #     write_only=True
+    # )
 
     class Meta:
         model = Resume
+        # fields = "__all__"
         exclude = ['profile_photo']
 
     def to_representation(self, instance):
@@ -73,14 +75,12 @@ class ResumeSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        applied_vacancies = validated_data.pop('applied_vacancies', [])  # Извлекаем applied_vacancies из данных
         user_data = validated_data.pop('user')
         email = user_data.email
         user = User.objects.filter(email=email).first()
+        profile = user.user_profile
         if user:
-            resume = Resume.objects.create(user=user, **validated_data)
-            resume.applied_vacancies.set(applied_vacancies)
-            send_resume_data(email, resume)
+            resume = Resume.objects.create(user=user, profile=profile, **validated_data)
             return resume
         else:
             raise serializers.ValidationError('Пользователь с указанным email не найден')
