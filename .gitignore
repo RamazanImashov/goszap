@@ -3,6 +3,7 @@ idea
 .DS_Store
 .env.dev
 .env
+fileddfv.txt
 
 
 *.egg-info/
@@ -16,6 +17,8 @@ venv
 .venv
 media
 static
+media
+back-static
 
 __pycache__/
 */__pycache__/

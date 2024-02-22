@@ -28,12 +28,11 @@ INSTALLED_APPS = [
     "corsheaders",
 
     "account",
-    'channels',
+    # 'channels',
     'chat',
     'chatgpt',
     'apps.profiles',
     'apps.resume',
-    'apps.vacancy',
     'apps.projects',
     'apps.post',
     'apps.review',
@@ -75,14 +74,21 @@ ASGI_APPLICATION = 'config.asgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config('DB_NAME'),
-        'USER': config('DB_USER'),
-        "PASSWORD": config('DB_PASS'),
-        'HOST': config('DB_HOST'),
-        'PORT': 5432,
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": config('DB_NAME'),
+#         'USER': config('DB_USER'),
+#         "PASSWORD": config('DB_PASS'),
+#         'HOST': config('DB_HOST'),
+#         'PORT': 5432,
+#     }
+# }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -110,11 +116,11 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
+STATIC_URL = "/back-static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "back-static")
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/back-media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "back-media")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

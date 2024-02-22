@@ -8,8 +8,6 @@ from .permissions import IsAuthorPermission, IsAdminPermission
 from .models import Resume, OtherResume
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.serializers import ValidationError
-from apps.vacancy.permissions import IsEmployer
-from apps.vacancy.models import Vacancy
 
 
 User = get_user_model()
